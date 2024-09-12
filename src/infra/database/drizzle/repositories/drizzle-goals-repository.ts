@@ -1,4 +1,4 @@
-import { and, count, eq, gte, lte, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, lte, sql } from "drizzle-orm";
 
 import { drizzleDb } from "../index";
 import { goalCompletions, goals } from "../schemas";
@@ -8,6 +8,7 @@ import type {
   GoalsRepositoryGetWeekPendingGoalsParams,
   GoalsRepositoryGetWeekSummaryParams,
   GoalsRepositoryGetWeekSummaryResponse,
+  GoalsRepositoryGoalsPerDay,
 } from "@/modules/goals/repositories/goals-repository";
 import type { Goal } from "@/modules/goals/entities/Goal";
 import { DrizzleGoalsMapper } from "../../mappers/drizzle-goals-mapper";
@@ -113,6 +114,7 @@ export class DrizzleGoalsRepository implements GoalsRepository {
             lte(goalCompletions.createdAt, lastDayOfWeek)
           )
         )
+        .orderBy(desc(goalCompletions.createdAt))
     );
 
     const goalsCompletedByWeekDay = drizzleDb
@@ -133,9 +135,10 @@ export class DrizzleGoalsRepository implements GoalsRepository {
           })
           .from(goalsCompletedInWeek)
           .groupBy(goalsCompletedInWeek.completedAtDate)
+          .orderBy(desc(goalsCompletedInWeek.completedAtDate))
       );
 
-    const result = await drizzleDb
+    const [result] = await drizzleDb
       .with(goalsCreatedUpToWeek, goalsCompletedInWeek, goalsCompletedByWeekDay)
       .select({
         completed: sql`(SELECT COUNT(*) FROM ${goalsCompletedInWeek})`.mapWith(
@@ -145,7 +148,7 @@ export class DrizzleGoalsRepository implements GoalsRepository {
           sql`(SELECT SUM(${goalsCreatedUpToWeek.desiredWeeklyFrequency}) FROM ${goalsCreatedUpToWeek})`.mapWith(
             Number
           ),
-        goalsPerDay: sql`
+        goalsPerDay: sql<GoalsRepositoryGoalsPerDay>`
           JSON_OBJECT_AGG(
             ${goalsCompletedByWeekDay.completedAtDate},
             ${goalsCompletedByWeekDay.completions}

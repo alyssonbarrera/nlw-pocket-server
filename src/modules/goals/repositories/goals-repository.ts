@@ -10,11 +10,22 @@ export type GoalsRepositoryGetWeekSummaryParams = {
   lastDayOfWeek: Date;
 };
 
-export type GoalsRepositoryGetWeekSummaryResponse = Array<{
+export type GoalsRepositoryGoalsPerDay = Array<
+  Record<
+    string,
+    Array<{
+      id: string;
+      title: string;
+      completedAt: Date;
+    }>
+  >
+>;
+
+export type GoalsRepositoryGetWeekSummaryResponse = {
   completed: number;
   total: number;
-  goalsPerDay: unknown;
-}>;
+  goalsPerDay: GoalsRepositoryGoalsPerDay;
+};
 
 export abstract class GoalsRepository {
   abstract save(goal: Goal): Promise<Goal>;
