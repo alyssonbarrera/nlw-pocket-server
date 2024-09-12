@@ -1,0 +1,13 @@
+version: '3'
+name: nlw-pocket-server
+
+services:
+  nlw_pocket_db:
+    image: bitnami/postgresql:13.16.0
+    container_name: nlw_pocket_db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=nlw_pocket
