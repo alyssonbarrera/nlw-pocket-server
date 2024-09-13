@@ -24,7 +24,7 @@ Documentation for the API can be found [here](https://documenter.getpostman.com/
 # Database
 DATABASE_URL="postgresql://docker:docker@localhost:5432/nlw_pocket_db"
 
-#Server
+# Server
 PORT=3333
 ```
 💡 Remember to update the variables based on your configurations.  
