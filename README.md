@@ -47,6 +47,12 @@ npm install
 npm run migration:run
 ```
 
+🚀 Finally, to start the application, run:  
+
+```shell
+npm run dev
+```
+
 📡 With everything set up, you will be able to access the application using:  
 
 ```text
